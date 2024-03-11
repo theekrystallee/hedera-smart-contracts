@@ -18,6 +18,7 @@
  *
  */
 
+require('hardhat-abi-exporter');
 require('@openzeppelin/hardhat-upgrades');
 require('@nomicfoundation/hardhat-foundry');
 require('@nomicfoundation/hardhat-chai-matchers');
@@ -47,7 +48,7 @@ module.exports = {
     },
   },
   solidity: {
-    version: '0.8.20',
+    version: '0.8.23',
     settings: {
       optimizer: {
         enabled: true,
@@ -55,13 +56,16 @@ module.exports = {
       },
     },
   },
+  abiExporter: {
+    path: './contracts-abi',
+    runOnCompile: true,
+  },
   defaultNetwork: NETWORKS.local.name,
   networks: {
     local: {
       url: NETWORKS.local.url,
       accounts: PRIVATE_KEYS,
       chainId: NETWORKS.local.chainId,
-      gas: 10000000,
       sdkClient: {
         operatorId: OPERATOR_ID_A,
         operatorKey: OPERATOR_KEY_A,
