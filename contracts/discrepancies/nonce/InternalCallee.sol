@@ -2,50 +2,49 @@
 pragma solidity ^0.8.0;
 
 contract Sample {
-    function selfdestruct() external {
-        selfdestruct(payable(msg.sender));
-    }
+  function selfdestruct() external {
+    selfdestruct(payable(msg.sender));
+  }
 }
 
 contract InternalCallee {
-    uint calledTimes = 0;
+  uint calledTimes = 0;
 
-    function factorySample() external returns (address) {
-        return address(new Sample());
-    }
+  function factorySample() external returns (address) {
+    return address(new Sample());
+  }
 
-    function externalFunction() external returns (uint) {
-        return ++calledTimes;
-    }
+  function externalFunction() external returns (uint) {
+    return ++calledTimes;
+  }
 
-    function revertWithRevertReason() public returns (bool) {
-        revert("RevertReason");
-    }
+  function revertWithRevertReason() public returns (bool) {
+    revert('RevertReason');
+  }
 
-    function revertWithoutRevertReason() public returns (bool) {
-        revert();
-    }
+  function revertWithoutRevertReason() public returns (bool) {
+    revert();
+  }
 
-    function selfdestruct(address payable _addr) external {
-        selfdestruct(_addr);
-    }
+  function selfdestruct(address payable _addr) external {
+    selfdestruct(_addr);
+  }
 
-      function selfdestructSample(address payable sampleAddress) external {
-        Sample(sampleAddress).selfdestruct();
-    }
+  function selfdestructSample(address payable sampleAddress) external {
+    Sample(sampleAddress).selfdestruct();
+  }
 
-    function internalTransfer(address payable _addr) external {
-        _addr.call(abi.encodeWithSignature("transferTo()"));
-    }
+  function internalTransfer(address payable _contract, address payable _receiver) payable external {
+   (bool success,) = _contract.call(abi.encodeWithSignature("transferTo(address)", _receiver));
+  require(success, "Function call failed");
+  }
 
-    event DeployedContractAddress(address);
+  event DeployedContractAddress(address);
 
-     function deployViaCreate2(uint256 _salt) external returns (address) {
-        Sample temp = new Sample{salt: bytes32(_salt)}();
-        emit DeployedContractAddress(address(temp));
-        
-        return address(temp);
-    }
+  function deployViaCreate2(uint256 _salt) external returns (address) {
+    Sample temp = new Sample{salt: bytes32(_salt)}();
+    emit DeployedContractAddress(address(temp));
 
-
+    return address(temp);
+  }
 }
